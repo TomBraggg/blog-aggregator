@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/xml"
-	"fmt"
 	"html"
 	"io"
 	"net/http"
@@ -63,19 +62,4 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	}
 
 	return &rssFeed, nil
-}
-
-func printRSSFeed(rssFeed RSSFeed) {
-	fmt.Println("=====================================")
-	fmt.Printf("* Title:		%s\n", rssFeed.Channel.Title)
-	fmt.Printf("* Link:			%v\n", rssFeed.Channel.Link)
-	fmt.Printf("* Description:	%v\n", rssFeed.Channel.Description)
-	for _, item := range rssFeed.Channel.Item {
-		fmt.Println("* Item:")
-		fmt.Printf("	* Title:		%s\n", item.Title)
-		fmt.Printf("	* Link:			%s\n", item.Link)
-		fmt.Printf("	* Description:	%s\n", item.Description)
-		fmt.Printf("	* PubDate:		%s\n", item.PubDate)
-	}
-	fmt.Println("=====================================")
 }
