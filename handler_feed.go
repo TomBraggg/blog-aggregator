@@ -9,17 +9,12 @@ import (
 	"github.com/tombraggg/blog-aggregator/internal/database"
 )
 
-func handlerAddFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.Args) != 2 {
 		return fmt.Errorf("usage: %s <name> <url>", cmd.Name)
 	}
 	name := cmd.Args[0]
 	url := cmd.Args[1]
-
-	currentUser, err := s.db.GetUserByName(context.Background(), s.cfg.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("could not find user: %w", err)
-	}
 
 	feed, err := s.db.CreateFeed(context.Background(), database.CreateFeedParams{
 		ID:        uuid.New(),
@@ -27,13 +22,26 @@ func handlerAddFeed(s *state, cmd command) error {
 		UpdatedAt: time.Now(),
 		Name:      name,
 		Url:       url,
-		UserID:    currentUser.ID,
+		UserID:    user.ID,
 	})
 	if err != nil {
 		return fmt.Errorf("could not create feed: %w", err)
 	}
 	fmt.Println("Feed created successfully:")
-	printFeed(feed, currentUser)
+	printFeed(feed, user)
+
+	feedFollow, err := s.db.CreateFeedFollow(context.Background(), database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		UserID:    user.ID,
+		FeedID:    feed.ID,
+	})
+	if err != nil {
+		return fmt.Errorf("could not create feed follow: %w", err)
+	}
+	fmt.Println("Feed followed successfully:")
+	printFeedFollow(feedFollow.UserName, feedFollow.FeedName)
 
 	return nil
 }

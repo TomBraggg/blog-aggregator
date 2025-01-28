@@ -16,3 +16,20 @@ WITH inserted_feed_follow AS(
 FROM inserted_feed_follow
 INNER JOIN feeds ON feeds.id = inserted_feed_follow.feed_id
 INNER JOIN users ON users.id = inserted_feed_follow.user_id;
+
+-- name: DeleteFeedFollowByURL :execrows
+DELETE FROM feed_follows
+USING feeds
+WHERE feed_follows.feed_id = feeds.id 
+  AND feed_follows.user_id = $1
+  AND feeds.url = $2;
+
+-- name: GetFeedFollowsForUser :many
+SELECT
+    feed_follows.*,
+    users.name as user_name,
+    feeds.name as feed_name
+FROM feed_follows
+INNER JOIN users ON feed_follows.user_id = users.id
+INNER JOIN feeds ON feed_follows.feed_id = feeds.id
+WHERE feed_follows.user_id = $1;
