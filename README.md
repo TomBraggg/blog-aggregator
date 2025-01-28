@@ -31,16 +31,40 @@ Create a file called ".gatorconfig.json" in your home directory. It should conta
 
 ```json
 {
-    "db_url":"postgres://postgres:password@localhost:5432/gator?sslmode=disable",
-    "current_user_name":"kahya"
+    "db_url":"postgres://username:@localhost:5432/gator?sslmode=disable"
 }
 ```
 
-## Running
+## Usage
 
-### Commands
+Create a new user:
 
-#### agg <duration> to scrape all feeds
-- gator agg <duration>
-- Scrapes all feeds with an interval of duration
+```bash
+gator register <name>
+```
 
+Add a feed:
+
+```bash
+gator addfeed <url>
+```
+
+Start the aggregator:
+
+```bash
+gator agg 30s
+```
+
+View the posts:
+
+```bash
+gator browse [limit]
+```
+
+There are a few other commands you'll need as well:
+
+- `gator login <name>` - Log in as a user that already exists
+- `gator users` - List all users
+- `gator feeds` - List all feeds
+- `gator follow <url>` - Follow a feed that already exists in the database
+- `gator unfollow <url>` - Unfollow a feed that already exists in the database
